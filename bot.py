@@ -13,12 +13,16 @@ token = os.environ['TELEGRAM_TOKEN']
 bot = telebot.TeleBot(token)
 
 fighters=[]
-btimer=30
+btimer=10
 
 
 @bot.message_handler(commands=['start'])
 def start(m):
-    if m.from_user.id not in fighters:
+    no=0
+    for ids in fighters:
+        if ids['id']==m.from_user.id:
+            no=1
+    if no==0:
         fighters.append(createplayer(m.from_user))
         bot.send_message(m.chat.id, 'Вы успешно зашли в игру! Теперь ждите, пока ваш боец прострелит кому-нибудь яйцо.\nСоветую кинуть бота в мут!')
      
@@ -83,19 +87,28 @@ def fight():
                     ids['killed']+=1
                     target['killer']=ids['name']
                     text+='Вы прострелили яйцо цели! Та погибает.\n'
-            bot.send_message(ids['id'], text)
+            try:
+                bot.send_message(ids['id'], text)
+            except:
+                pass
     dellist=[]
     for ids in fighters:
         if ids['hp']<=0:
             dellist.append(ids)
     for ids in dellist:
-        bot.send_message(ids['id'], 'Вы сдохли. Вас убил '+ids['killer'])
+        try:
+            bot.send_message(ids['id'], 'Вы сдохли. Вас убил '+ids['killer'])
+        except:
+            pass
         me=ids
         text='Итоговые статы:\n\n'
         text+='ХП: '+str(me['hp'])+'\n'
         text+='В вас попали: '+str(me['hitted'])+' раз(а)\n'
         text+='Вы убили: '+str(me['killed'])+' дурачков\n'
-        bot.send_message(ids['id'], text)
+        try:
+            bot.send_message(ids['id'], text)
+        except:
+            pass
         fighters.remove(ids)
     global btimer
     t=threading.Timer(btimer, fight)
