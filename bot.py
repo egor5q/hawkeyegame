@@ -15,6 +15,7 @@ bot = telebot.TeleBot(token)
 fighters=[]
 btimer=10
 
+names=['Волк', 'Осёл', 'Кроль', 'Пажилая чимчима', 'Сосааать']
 
 @bot.message_handler(commands=['start'])
 def start(m):
@@ -124,6 +125,9 @@ def fight():
         except:
             pass
         fighters.remove(ids)
+    if len(fighters)<=2:
+        name=random.choice(names)
+        fighters.append(createplayer(name=name))
     global btimer
     t=threading.Timer(btimer, fight)
     t.start()
