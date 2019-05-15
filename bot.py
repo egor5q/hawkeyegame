@@ -23,9 +23,16 @@ def start(m):
         if ids['id']==m.from_user.id:
             no=1
     if no==0:
-        fighters.append(createplayer(m.from_user))
+        fighters.append(createplayer(user=m.from_user))
         bot.send_message(m.chat.id, 'Вы успешно зашли в игру! Теперь ждите, пока ваш боец прострелит кому-нибудь яйцо.\nСоветую кинуть бота в мут!')
-     
+ 
+@bot.message_handler(commands=['add'])
+def add(m):
+    if m.from_user.id==441399484:
+        name=m.text.split(' ')[1]
+        fighters.append(createplayer(name=name))
+        bot.send_message(m.chat.id, 'Добавлен игрок "'+name+'"!')
+
     
 @bot.message_handler(commands=['settimer'])
 def settimer(m):
@@ -50,17 +57,24 @@ def stats(m):
         bot.send_message(m.chat.id, text)
 
 
-def createplayer(user):
+def createplayer(user=None, name=None):
+    if user!=None:
+        name=user.first_name
+        idd=user.id
+    else:
+        name=name
+        idd='npc'
     return {
-        'hp':1000,
-        'damage':10,
-        'killchance':5,
-        'name':user.first_name,
-        'id':user.id,
-        'hitted':0,  # сколько раз попали
-        'killed':0,   # сколько уебал
-        'killer':''
-           }
+            'hp':1000,
+            'damage':10,
+            'killchance':5,
+            'name':name,
+            'id':idd,
+            'hitted':0,  # сколько раз попали
+            'killed':0,   # сколько уебал
+            'killer':''
+               }
+        
            
    
     
